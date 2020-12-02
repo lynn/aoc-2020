@@ -8,17 +8,17 @@ Password = String
 
 record Policy where
   constructor MkPolicy
-  least, most : Nat
-  char: Char
+  low, high : Nat
+  char : Char
 
 ||| Parse a line of input like "1-3 a: abcde".
 parse : String -> Maybe (Policy, Password)
 parse s =
   case split (not . isAlphaNum) s of
     -- ["1", "3", "a", "", "abcde"]
-    [sl, sm, sc, "", p] =>
-      case (parsePositive sl, parsePositive sm, unpack sc) of
-        (Just l, Just m, [c]) => Just (MkPolicy l m c, p)
+    [sl, sh, sc, "", p] =>
+      case (parsePositive sl, parsePositive sh, unpack sc) of
+        (Just l, Just h, [c]) => Just (MkPolicy l h c, p)
         _ => Nothing
     _ => Nothing
 
@@ -26,7 +26,7 @@ parse s =
 conforms1 : Policy -> Password -> Bool
 conforms1 policy pw =
   let n = count (== policy.char) (unpack pw)
-  in n >= policy.least && n <= policy.most
+  in n >= policy.low && n <= policy.high
 
 ||| The ** password validity test:
 conforms2 : Policy -> Password -> Bool
@@ -36,6 +36,6 @@ conforms2 _ _ = False
 
 main : IO ()
 main = do
-  ns <- parseLines parse
-  putStr "*   "; printLn $ count (uncurry conforms1) ns
-  putStr "**  "; printLn $ count (uncurry conforms2) ns
+  pairs <- parseLines parse
+  putStr "*   "; printLn $ count (uncurry conforms1) pairs
+  putStr "**  "; printLn $ count (uncurry conforms2) pairs
