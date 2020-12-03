@@ -1,8 +1,11 @@
 module Aoc
 -- This module defines functions that might be useful every day.
 
+import Data.Nat
 import Data.List
+import Data.Stream
 import Data.Strings
+import Data.Vect
 
 %default total
 
@@ -15,6 +18,11 @@ parseLines parser =
   case parser !getLine of
     Just n => (n::) <$> parseLines parser
     Nothing => pure []
+
+||| Read a list of non-empty strings from STDIN.
+public export partial
+readLines : HasIO io => io (List String)
+readLines = parseLines (\s => if s == "" then Nothing else Just s)
 
 ||| Read a list of integers from STDIN, each on its own line.
 public export partial
@@ -34,3 +42,23 @@ maybeIndex n xs =
     Yes _ => Just (index n xs)
     _ => Nothing
 
+||| Turn a list into a vector of length n, if possible.
+||| (This is in the stdlib in newer versions of Idris2 than mine.)
+public export
+toVect : (n : Nat) -> List a -> Maybe (Vect n a)
+toVect Z [] = Just []
+toVect (S k) (x :: xs) = (x::) <$> toVect k xs
+toVect _ _ = Nothing
+
+||| Turn a list of lists into an (n x m) matrix, if possible.
+public export
+toMatrix : (n : Nat) -> (m : Nat) -> List (List a) -> Maybe (Vect n (Vect m a))
+toMatrix n m rows =
+    sequence (map (toVect m) rows) >>= toVect n
+
+||| Modularly index a non-empty vector.
+public export
+mindex : {n : Nat} -> (i : Nat) -> Vect (S n) a -> a
+mindex i (x::xs) =
+  let i' = modNatNZ i (S n) SIsNotZ  -- really just an optimization
+  in index i' (cycle (x::toList xs))
