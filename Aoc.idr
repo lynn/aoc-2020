@@ -3,6 +3,7 @@ module Aoc
 
 import Data.Nat
 import Data.List
+import Data.List1
 import Data.Stream
 import Data.Strings
 import Data.Vect
@@ -24,15 +25,29 @@ public export partial
 readLines : HasIO io => io (List String)
 readLines = parseLines (\s => if s == "" then Nothing else Just s)
 
+||| Read a list of paragraphs from STDIN.
+public export partial
+readParagraphs : HasIO io => io (List1 (List String))
+readParagraphs = split (== "") <$> go
+  where partial go : io (List String); go = do
+    l <- getLine
+    case l of
+      "" => do
+        m <- getLine
+        case m of
+          "" => pure []
+          _ => (l::) . (m::) <$> go
+      _ => (l::) <$> go
+
 ||| Read a list of integers from STDIN, each on its own line.
 public export partial
 readIntegerLines : (Num a, Neg a, HasIO io) => io (List a)
 readIntegerLines = parseLines parseInteger
 
-||| Count how many times a predicate is true in a list.
+||| Count how many times a predicate is true.
 public export
-count : (a -> Bool) -> List a -> Nat
-count f = length . filter f
+count : Foldable t => (a -> Bool) -> t a -> Nat
+count f = foldr (\x, acc => if f x then S acc else acc) 0
 
 ||| Try to index into a list.
 public export
@@ -62,3 +77,7 @@ mindex : {n : Nat} -> (i : Nat) -> Vect (S n) a -> a
 mindex i (x::xs) =
   let i' = modNatNZ i (S n) SIsNotZ  -- really just an optimization
   in index i' (cycle (x::toList xs))
+
+public export
+isLowerHexDigit : Char -> Bool
+isLowerHexDigit c = isDigit c || c >= 'a' && c <= 'f'

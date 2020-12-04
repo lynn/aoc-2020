@@ -31,7 +31,7 @@ conforms1 policy pw =
 ||| The ** password validity test:
 conforms2 : Policy -> Password -> Bool
 conforms2 (MkPolicy (S i) (S j) c) pw =
-  count ((== Just c) . (`maybeIndex` unpack pw)) [i, j] == 1
+  count {t=List} ((== Just c) . (`maybeIndex` unpack pw)) [i, j] == 1
 conforms2 _ _ = False
 
 main : IO ()
