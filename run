@@ -1,2 +1,2 @@
 #!/bin/bash 
-idris2 day-$1.idr -x main < input-$1.txt
+idris2 -p contrib day-$1.idr -x main < input-$1.txt
