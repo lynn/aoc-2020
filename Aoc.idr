@@ -13,23 +13,25 @@ import Data.Vect
 ||| Apply a parser to each line of STDIN until it fails.
 ||| (`getLine` eventually returns an empty string, which
 ||| the parser should return Nothing for.)
-public export partial
+|||
+||| We use assert_total, because Idris doesn't know that our input files are finite.
+public export
 parseLines : HasIO io => (String -> Maybe a) -> io (List a)
 parseLines parser =
   case parser !getLine of
-    Just n => (n::) <$> parseLines parser
+    Just n => (n::) <$> assert_total (parseLines parser)
     Nothing => pure []
 
 ||| Read a list of non-empty strings from STDIN.
-public export partial
+public export
 readLines : HasIO io => io (List String)
 readLines = parseLines (\s => if s == "" then Nothing else Just s)
 
 ||| Read a list of paragraphs from STDIN.
-public export partial
+public export
 readParagraphs : HasIO io => io (List1 (List String))
 readParagraphs = split (== "") <$> go
-  where partial go : io (List String); go = do
+  where go : io (List String); go = assert_total $ do
     l <- getLine
     case l of
       "" => do
@@ -40,7 +42,7 @@ readParagraphs = split (== "") <$> go
       _ => (l::) <$> go
 
 ||| Read a list of integers from STDIN, each on its own line.
-public export partial
+public export
 readIntegerLines : (Num a, Neg a, HasIO io) => io (List a)
 readIntegerLines = parseLines parseInteger
 
@@ -81,3 +83,27 @@ mindex i (x::xs) =
 public export
 isLowerHexDigit : Char -> Bool
 isLowerHexDigit c = isDigit c || c >= 'a' && c <= 'f'
+
+public export
+takeVect : (n : Nat) -> List a -> Maybe (Vect n a, List a)
+takeVect Z xs = Just ([], xs)
+takeVect (S n) [] = Nothing
+takeVect (S n) (x::xs) = do { (v, l) <- takeVect n xs; pure (x::v, l) }
+
+||| Get all ways to choose n distinct elements from a list.
+public export
+combinations : (n : Nat) -> List a -> List (Vect n a)
+combinations Z _ = [[]]
+combinations (S k) [] = []
+combinations (S k) (x::xs) =
+  [x::c | c <- combinations k xs] ++ combinations (S k) xs
+
+public export
+scanl : (f : a -> b -> a) -> a -> List b -> List a
+scanl f a [] = [a]
+scanl f a (b::bs) = a :: scanl f (f a b) bs
+
+public export
+scanl1 : (f : a -> a -> a) -> List a -> List a
+scanl1 f [] = []
+scanl1 f (x::xs) = scanl f x xs
