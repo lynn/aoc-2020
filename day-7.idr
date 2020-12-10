@@ -2,6 +2,7 @@ import Aoc
 import Data.List
 import Data.Strings
 import Data.SortedMap as M
+%default total
 
 Bag : Type
 Bag = String
@@ -30,12 +31,17 @@ parseRule s =
 mergeCount : Count -> Count -> Count
 mergeCount = M.mergeWith (+)
 
+-- This function is partial, because the input might as well contain
+-- a cycle of bags containing each other, which I don't want to worry
+-- about handling.
+partial
 totalCount : Bag -> Rules -> Count
 totalCount b r =
   case lookup b r of
     Nothing => M.empty
     Just c => foldl mergeCount c [map (*n) (totalCount b' r) | (b',n) <- M.toList c]
 
+partial
 main : IO ()
 main = do
   rules <- M.fromList <$> parseLines parseRule

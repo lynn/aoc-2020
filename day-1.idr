@@ -1,5 +1,6 @@
 import Aoc
 import Data.Vect
+%default total
 
 main : IO ()
 main = do

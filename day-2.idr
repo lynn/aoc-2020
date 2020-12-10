@@ -2,6 +2,7 @@ import Aoc
 import Data.List
 import Data.List1
 import Data.Strings
+%default total
 
 Password : Type
 Password = String
@@ -16,7 +17,7 @@ parse : String -> Maybe (Policy, Password)
 parse s =
   case split (not . isAlphaNum) s of
     -- ["1", "3", "a", "", "abcde"]
-    [sl, sh, sc, "", p] =>
+    (sl:::[sh,sc,"",p]) =>
       case (parsePositive sl, parsePositive sh, unpack sc) of
         (Just l, Just h, [c]) => Just (MkPolicy l h c, p)
         _ => Nothing

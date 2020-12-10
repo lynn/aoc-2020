@@ -59,14 +59,6 @@ maybeIndex n xs =
     Yes _ => Just (index n xs)
     _ => Nothing
 
-||| Turn a list into a vector of length n, if possible.
-||| (This is in the stdlib in newer versions of Idris2 than mine.)
-public export
-toVect : (n : Nat) -> List a -> Maybe (Vect n a)
-toVect Z [] = Just []
-toVect (S k) (x :: xs) = (x::) <$> toVect k xs
-toVect _ _ = Nothing
-
 ||| Turn a list of lists into an (n x m) matrix, if possible.
 public export
 toMatrix : (n : Nat) -> (m : Nat) -> List (List a) -> Maybe (Vect n (Vect m a))
