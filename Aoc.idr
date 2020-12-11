@@ -99,3 +99,12 @@ public export
 scanl1 : (f : a -> a -> a) -> List a -> List a
 scanl1 f [] = []
 scanl1 f (x::xs) = scanl f x xs
+
+public export
+zipSL : Stream a -> List b -> List (a, b)
+zipSL _ [] = []
+zipSL (x::xs) (y::ys) = (x,y) :: zipSL xs ys
+
+public export
+enumerate : List a -> List (Integer, a)
+enumerate xs = zipSL [0..] xs
