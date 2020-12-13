@@ -108,3 +108,11 @@ zipSL (x::xs) (y::ys) = (x,y) :: zipSL xs ys
 public export
 enumerate : List a -> List (Integer, a)
 enumerate xs = zipSL [0..] xs
+
+public export
+minBy : Ord b => (a -> b) -> a -> a -> a
+minBy f x y = if f x < f y then x else y
+
+public export
+minimumBy : Ord b => (a -> b) -> List1 a -> a
+minimumBy f xs = foldr1 (minBy f) xs
