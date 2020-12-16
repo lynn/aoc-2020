@@ -23,11 +23,6 @@ turnLeft (x,y) = (-y,x)
 turnRight : Point -> Point
 turnRight (x,y) = (y,-x)
 
-||| Apply a function n times.
-times : Nat -> (a -> a) -> a -> a
-times Z f x = x
-times (S k) f x = times k f (f x)
-
 manhattanNorm : Point -> Integer
 manhattanNorm (x,y) = abs x + abs y
 

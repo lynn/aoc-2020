@@ -46,6 +46,11 @@ public export
 readIntegerLines : (Num a, Neg a, HasIO io) => io (List a)
 readIntegerLines = parseLines parseInteger
 
+||| Parse a comma-separated list of integers.
+public export
+parseCommaSeparatedIntegers : (Num a, Neg a) => String -> Maybe (List a)
+parseCommaSeparatedIntegers = traverse parseInteger . toList . split (==',')
+
 ||| Count how many times a predicate is true.
 public export
 count : Foldable t => (a -> Bool) -> t a -> Nat
@@ -116,3 +121,9 @@ minBy f x y = if f x < f y then x else y
 public export
 minimumBy : Ord b => (a -> b) -> List1 a -> a
 minimumBy f xs = foldr1 (minBy f) xs
+
+||| Apply a function n times.
+public export
+times : Nat -> (a -> a) -> a -> a
+times Z f x = x
+times (S k) f x = times k f (f x)
