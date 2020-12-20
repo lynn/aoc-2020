@@ -4,7 +4,7 @@ import Data.Vect
 import Data.SortedSet as S
 
 Point : Nat -> Type
-Point n = Vect n Integer
+Point n = Vect n Int
 
 replicateM : Monad m => (n : Nat) -> m a -> m (Vect n a)
 replicateM Z _ = pure []
@@ -25,7 +25,7 @@ main : IO ()
 main = do
   ls <- readLines
   let initial = [(x,y) | (y,line) <- enumerate ls, (x,c) <- enumerate (unpack line), c == '#']
-  let initial3 = S.fromList [[x,y,0] | (x,y) <- initial]
-  let initial4 = S.fromList [[x,y,0,0] | (x,y) <- initial]
+  let initial3 = S.fromList [[the Int $ cast x,cast y,0] | (x,y) <- initial]
+  let initial4 = S.fromList [[the Int $ cast x,cast y,0,0] | (x,y) <- initial]
   putStr "*   "; printLn $ length $ S.toList $ times 6 step initial3
   putStr "**  "; printLn $ length $ S.toList $ times 6 step initial4
