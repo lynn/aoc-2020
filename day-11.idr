@@ -63,7 +63,7 @@ seek (S k) p ps dir =
     if S.contains p' ps then Just p' else seek k p' ps dir
 
 ||| Seek for seats in all 8 directions.
-||| (The fuel value "20" is eyeballed from the input ☠️)
+||| (The fuel value "20" is eyeballed from the input ☠️ merry christmas)
 neighbors2 : (seats : Points) -> Point -> Points
 neighbors2 seats p = S.fromList $ mapMaybe (seek 20 p seats) directions
 

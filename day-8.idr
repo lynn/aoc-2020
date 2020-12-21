@@ -4,7 +4,7 @@ import Data.Nat
 import Data.Strings
 import Data.SortedSet as S
 %default total
--- TODO: this broke when I upgraded from 0.2.1 to 0.2.1-0a685f8d2... what's going on??
+-- TODO: this broke when I upgraded from 0.2.1 to 0.2.1-0a685f8d2... merry christmas
 
 data Instruction
   = Nop Integer

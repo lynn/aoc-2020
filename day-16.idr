@@ -61,7 +61,8 @@ main = do
   let validTickets = filter (all validAtAll) nts
   let columns = transpose validTickets
   let sudoku = [[f.name | f <- fs, all (inRanges f.ranges) col] | col <- columns]
-  let solution = times 40 whittle sudoku
+  let merryChristmas = 40 -- :) !!!!
+  let solution = times merryChristmas whittle sudoku
   Just fieldOrder <- pure $ traverse onlyOne solution | _ => putStrLn "not enough progress"
   putStr "**  "; printLn $ product [v | (k,v) <- zip fieldOrder mt, "departure" `isPrefixOf` k]
 
